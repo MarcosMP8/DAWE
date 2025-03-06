@@ -1,0 +1,138 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<title>Proyecto</title>
+		<meta name="description" content="Proyecto DAWE"> 
+		<link rel=stylesheet href="css/estilos.css">
+        <link rel="icon" type="image/x-icon" href="imagenes/fondoHojaPagina.png">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+	</head>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+	<script type="module" src="js/tienda.js"></script>
+    <script type="module" src="js/main.js"></script>
+    
+    <body>
+        <div class="contenido">
+            <header>
+                <h1>~ LA TIENDA DE FRIKIS ~</h1>
+                <nav>
+                    <ul>
+                        <li><a href="#">Inicio</a></li>
+                        <li id="mostrarBotonCarrito"><a data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">Carrito</a></li>
+                    </ul>
+                </nav>
+            </header>
+            <!--Contenedor del Carrito-->
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+                <div class="offcanvas-header">
+                  <h5 class="offcanvas-title" id="offcanvasExampleLabel">Carrito de la Compra</h5>
+                  <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <div id="contenedorProductosCarrito" class="row">
+                        <!-- Aquí se añadirán productos del carrito dinámicamente -->
+                    </div>              
+                </div>
+                <div class="offcanvas-footer"> 
+                    <p>Total : </p>
+                    <p>Introduce el código de descuento: </p>
+                
+                    <!-- 🟢 Aquí agregamos el campo para el código de descuento -->
+                    <div class="descuento-container">
+                        <input type="text" id="codigoDescuentoInput" placeholder="Introduce código de descuento">
+                        <button id="aplicarCodigoDescuento">Aplicar</button>
+                        <p id="mensajeDescuento" class="text-success"></p>
+                    </div>
+                </div>
+                <div class="offcanvas-footer"> <!-- Para mostrar el precio total de todos los productos del carrit-->
+                    <p>Total : </p>
+                    <p id="precioTotal">0</p>
+                    <p> €</p>
+                </div>
+              </div>
+            <!-- Contenedor de Productos y Formulario -->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-9">
+                        <main>
+                            <section>
+                                <div id="infoMain">
+                                    <h2 id="titulo">Todos los productos</h2>
+                                    <input type="text" id="search-bar" placeholder="Buscar producto...">
+                                </div>
+                                <!-- Anuncio de promoción -->
+                                <div id="promo-banner" class="promo-banner">
+                                     <p><strong>¡Descuento del 15% en juegos de mesa!</strong> Compra juegos de mesa por más de 30€ y recibe un descuento automático en el carrito.</p>
+                                </div>
+
+                                <hr>
+                                 <!-- Contenedor donde se generarán los productos (se creara un article por producto de tipo "card" de Bootstrap") -->
+                                <div id="contenedorProductos" class="row">
+                                    <!-- Aquí se añadirán articles por cada productos dinámicamente -->
+                                </div>
+                                  <div id="Paginacion">
+                                    <!-- Información de cantidad de productos -->
+                                    <p id="detallePaginacion"></p>
+                                    <!-- Menú de paginación -->
+                                    <nav>
+                                        <ul id="paginacion">
+                                            <!-- Los botones del menu de la paginacion se generarán dinámicamente -->
+                                        </ul>
+                                    </nav>
+                                  </div>
+                                
+                            </section>
+                        </main>
+                    </div>
+                    <div class="col-3">
+                        <aside>
+                            <h4>Añadir Producto</h4>
+                            <form method="POST"  id="formularioProducto" enctype="multipart/form-data">
+                                <select name="tipo" id="tipoProducto">
+                                    <option value="" selected disabled>Escoge un tipo</option>
+                                    <option value="T1">Videojuego</option>
+                                    <option value="T2">Libro</option>
+                                    <option value="T3">Merchandising</option>
+                                    <option value="T4">Puzzle</option>
+                                    <option value="T5">Juego de Mesa</option>
+                                </select>
+
+                                <input type="text" id="nombre" name="nombre" placeholder="Nombre">
+                                <input type="number" id="precio" name="precio" placeholder="Precio">
+                                <textarea name="descripcion" placeholder="Descripcion"></textarea>
+                                
+                                <div id="campo-adicional">
+                                    <!-- Campo adicional que aparecerá según el tipo de producto -->
+                                </div> 
+                                <!-- Campo del formulario para elegir fichero-->
+                                <div class="custom-file-container">
+                                    <label for="seleccionArchivo" class="custom-file-label">Examinar...</label>
+                                    <span id="file-name" class="custom-file-name">No hay imagen.</span>
+                                    <input type="file" name="seleccionArchivo" id="seleccionArchivo" class="custom-file-input">
+                                </div>
+                                <!-- Campo del formulario para drag & drop-->
+                                <div class="drop-area" id="arrastrarArchivo">
+                                    Arrastra y suelta una imagen aquí o haz clic para seleccionarla.
+                                </div>
+                                <input type="button" value="Subir Producto" id="btnSubirProducto">
+                                <input type="reset" value="Borrar">
+                                <!-- Agregar un div para los mensajes de alerta -->
+                                <div id="mensajeError">
+                                    
+                                </div>
+                                <div id="mensajeProductoNuevo">
+                                    ¡Producto añadido con exito!
+                                </div>
+                            </form>
+                        </aside>
+                    </div>
+                </div>
+            </div>
+            <footer>
+                <p>Copyright DAWE</p>
+            </footer>
+        </div>
+	</body>
+</html>
