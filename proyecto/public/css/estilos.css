@@ -28,6 +28,7 @@ body{
     margin: 0 auto;
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
 }
 
 /*************************** 
@@ -54,7 +55,7 @@ header h1 {
 
 /* Menu Superior */
 /* ??? CUIDADO ESTE NAV CAMBIA TAMBIEN EL DE PAGINACION*/
-nav {
+header nav {
     background-color: rgb(121, 121, 121); 
     color: white;
 }
@@ -414,30 +415,79 @@ MOSTRAR INFORMACION COMPLETA
 /*************************** 
         PAGINACION 
 ***************************/ 
-#Paginacion {
-    text-align: center;
-    margin-bottom: 60px;
+.paginacion-nav {
+    background-color: transparent !important;
+    border-radius: 5px;
+    margin-bottom: 0px;
+    padding: 10px 0;
+    box-shadow: none !important;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+    
 }
-.pagActual {
-    background-color: rgb(183, 182, 182) ;
-    text-shadow: 1px 1px 2px #ffffff, -1px -1px 2px #ffffff, 1px -1px 2px #ffffff, -1px 1px 2px #ffffff; 
-    font-weight: bold; /* Texto en negrita */
+
+.page-item {
+    background: none !important;
+    margin: 0 2px; /* Reduce el espacio entre botones */
 }
+
+.page-link {
+    background-color: white !important; /* Asegura el fondo blanco */
+    color: #007bff !important; /* Mantiene el color azul de Bootstrap */
+    border: 1px solid #ddd; /* Agrega un borde para que se vea mejor */
+}
+
+.page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+.page-link:focus, 
+.page-link:active,
+.page-item:focus, 
+.page-item:active {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: transparent !important; /* Eliminar borde si es necesario */
+}
+
+
 
 /*************************** 
         FOOTER
 ***************************/ 
 footer {
-    position: fixed; 
+    position: relative; 
     left: 0; 
     bottom: 0; 
     width: 100%; 
     background-color: rgb(121, 121, 121); 
     color: white; 
     text-align: center;
+    margin-top: auto;
 }
 
 footer p {
     margin: 0;
     padding: 10px 0;
+}
+
+/*************************** 
+        PROMO BANNER 
+***************************/ 
+
+.promo-banner {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+}
+.promo-banner p {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0;
 }
