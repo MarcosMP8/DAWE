@@ -1,12 +1,17 @@
 
 class Producto { // Superclase
+    #id;
+    #nombre;
+    #precio;
+    #descripcion;
+    #imagen;
 
     constructor(nombre, precio, descripcion, imagen = "imagenes/sin-imagen.jpg") {
-        this._id = this.guidGenerator(); // Generar un ID único
-        this._nombre = nombre;
-        this._precio = precio;
-        this._descripcion = descripcion;
-        this._imagen = imagen ;
+        this.#id = this.guidGenerator(); // Generar un ID único
+        this.#nombre = nombre;
+        this.#precio = precio;
+        this.#descripcion = descripcion;
+        this.#imagen = imagen ;
     }
 
     guidGenerator(){
@@ -18,39 +23,39 @@ class Producto { // Superclase
 
     // Getter para id producto
     get id() {
-        return this._id;
+        return this.#id;
     }
 
     // Getter y Setter para nombre producto
     get nombre() {
-        return this._nombre;
+        return this.#nombre;
     }
     set nombre(nuevoNombre) {
-        this._nombre = nuevoNombre;
+        this.#nombre = nuevoNombre;
     }
 
     // Getter y Setter para precio producto
     get precio() {
-        return this._precio;
+        return this.#precio;
     }
     set precio(nuevoPrecio) {
-        this._precio = nuevoPrecio;
+        this.#precio = nuevoPrecio;
     }
 
     // Getter y Setter para descripcion producto
     get descripcion() {
-        return this._descripcion;
+        return this.#descripcion;
     }
     set descripcion(nuevaDescripcion) {
-        this._descripcion = nuevaDescripcion;
+        this.#descripcion = nuevaDescripcion;
     }
 
     // Getter y Setter para imagen producto
     get imagen() {
-        return this._imagen;
+        return this.#imagen;
     }
     set imagen(nuevaImagen) {
-        this._imagen = nuevaImagen;
+        this.#imagen = nuevaImagen;
     }
 }
 export default Producto;

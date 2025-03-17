@@ -11,6 +11,15 @@ let productosPorPagina;
 let paginaActual;
 let productosFiltrados = listaProductos; // Inicializamos con todos los productos
 
+document.addEventListener("DOMContentLoaded", function () {
+    const carritoBtn = document.getElementById("mostrarBotonCarrito");
+    
+    // ✅ Asegurar que el botón del carrito es visible al cargar la página
+    carritoBtn.style.display = "block";
+    actualizarCarrito(carrito);
+
+    console.log("Botón del carrito visible desde el inicio.");
+});
 
 document.addEventListener("DOMContentLoaded", function () {
     // Evento para el buscador de productos
@@ -107,7 +116,11 @@ function mostrarProductos(productos) {
     });
     renderizarPaginacion();  // Actualizar paginacion
     const detallePaginacion = document.getElementById("detallePaginacion");
-    detallePaginacion.textContent = `Mostrando ${productos.length} productos de ${productosFiltrados.length}`;
+    let productosMostrados = paginaActual * productosPorPagina;
+    if (productosMostrados > productosFiltrados.length) {
+        productosMostrados = productosFiltrados.length;
+    }
+    detallePaginacion.textContent = `Mostrando ${productosMostrados} productos de ${productosFiltrados.length}`;
 }
 
 // Función para obtener los productos que deben mostrarse en la página actual
@@ -117,43 +130,73 @@ function obtenerProductosPorPagina() {
     return productosFiltrados.slice(inicio, fin);
 }
 
-// Funcion para actualizar los botones de la paginacion
+// Función para actualizar los botones de la paginación con Bootstrap
+// Funcion para actualizar los botones de la paginacion con Bootstrap
 function renderizarPaginacion() {
     const totalPaginas = Math.ceil(productosFiltrados.length / productosPorPagina); // Calculamos el total de paginas necesarias
     const paginacionContainer = document.getElementById("paginacion");
-    paginacionContainer.innerHTML = ""; // Limpiamos el contenedor de la paginacion
-    // Si no es la primera pagina mostrar el boton "Anterior"
+    paginacionContainer.innerHTML = ""; // Limpiamos el contenedor de la paginación
+
+    // Crear el contenedor de paginación de Bootstrap
+    const nav = document.createElement("nav");
+    const ul = document.createElement("ul");
+    ul.classList.add("pagination", "justify-content-center"); // Clases de Bootstrap
+
+    // Botón "Anterior"
     if (paginaActual > 1) {
-        const anterior = document.createElement("button");
-        anterior.textContent = "Anterior";
-        anterior.addEventListener("click", () => {
+        const li = document.createElement("li");
+        li.classList.add("page-item");
+        const btnAnterior = document.createElement("button");
+        btnAnterior.classList.add("page-link");
+        btnAnterior.textContent = "Anterior";
+        btnAnterior.addEventListener("click", () => {
             paginaActual--;
             mostrarProductos(obtenerProductosPorPagina());
+            renderizarPaginacion(); // Actualizar la paginación
         });
-        paginacionContainer.appendChild(anterior);
+        li.appendChild(btnAnterior);
+        ul.appendChild(li);
     }
-    // Si la pagina es la actual, añadir la clase pagActual
+
+    // Botones numéricos
     for (let i = 1; i <= totalPaginas; i++) {
-        const pagina = document.createElement("button");
-        pagina.textContent = i;
-        pagina.classList.toggle("pagActual", i === paginaActual);
-        pagina.addEventListener("click", () => {
+        const li = document.createElement("li");
+        li.classList.add("page-item");
+        if (i === paginaActual) li.classList.add("active"); // Resaltar página actual
+        const btnPagina = document.createElement("button");
+        btnPagina.classList.add("page-link");
+        btnPagina.textContent = i;
+        btnPagina.addEventListener("click", () => {
             paginaActual = i;
             mostrarProductos(obtenerProductosPorPagina());
+            renderizarPaginacion(); // Actualizar la paginación
         });
-        paginacionContainer.appendChild(pagina);
+        li.appendChild(btnPagina);
+        ul.appendChild(li);
     }
-    // Si hay mas paginas mostrar el boton "Siguiente"
+
+    // Botón "Siguiente"
     if (paginaActual < totalPaginas) {
-        const siguiente = document.createElement("button");
-        siguiente.textContent = "Siguiente";
-        siguiente.addEventListener("click", () => {
+        const li = document.createElement("li");
+        li.classList.add("page-item");
+        const btnSiguiente = document.createElement("button");
+        btnSiguiente.classList.add("page-link");
+        btnSiguiente.textContent = "Siguiente";
+        btnSiguiente.addEventListener("click", () => {
             paginaActual++;
             mostrarProductos(obtenerProductosPorPagina());
+            renderizarPaginacion(); // Actualizar la paginación
         });
-        paginacionContainer.appendChild(siguiente);
+        li.appendChild(btnSiguiente);
+        ul.appendChild(li);
     }
+
+    // Agregar la paginación al contenedor
+    nav.appendChild(ul);
+    paginacionContainer.appendChild(nav);
 }
+
+
 
 // Funcion para mostrar un mensaje sobre el logo del carrito del producto
 function mostrarMensaje(mensaje) {
@@ -169,20 +212,33 @@ function actualizarCarrito(carrito) {
     carritoContainer.innerHTML = ""; // Limpiar el contenedor antes de actualizar
     const precioTotalP = document.getElementById("precioTotal");
     const carritoBtn = document.getElementById("mostrarBotonCarrito");
+    let idDescuento = "descuento-promocion";
+    let idCodigoDescuento = "descuento-codigo";
+    console.log("Carrito antes de la actualización:", JSON.stringify(carrito, null, 2));
+    
+    // **Filtrar productos normales en el carrito (excluyendo descuentos)**
+    let productosNormales = carrito.filter(item => {
+        const productoId = Object.keys(item)[0];
+        return productoId !== idCodigoDescuento && productoId !== idDescuento;
+    });
 
-    if (carrito.length === 0) {
+
+    if (productosNormales.length === 0) {
+        carrito = [];
         carritoContainer.innerHTML = "<p class='text-muted'>El carrito está vacío</p>";
         precioTotalP.textContent = `0`;
-        carritoBtn.style.display = "none";
+        carritoBtn.style.display = "block";
+        
+        console.log("Descuentos eliminados. Carrito ahora:", JSON.stringify(carrito, null, 2));
         return;
     }
 
     carritoBtn.style.display = "block";
     let precioTotal = 0;
+    let productosConExceso20 = [] // Array que se inicializa cada vez que se actualiza el carrito para guardará los IDs de los productos con cantidad mayor a 20
     let totalJuegosDeMesa = 0;
     let descuentoAplicado = false;
-    let idDescuento = "descuento-promocion";
-    let idCodigoDescuento = "descuento-codigo";
+    
     
     // Calcular el total de juegos de mesa
     carrito.forEach(producto => {
@@ -234,16 +290,21 @@ function actualizarCarrito(carrito) {
         }
     }
 
-    // verificar y actualizar el descuento por código si está `presente en el carrito
-    //const indiceCodigoDescuento = carrito.findIndex(item => Object.keys(item)[0] === idCodigoDescuento);
-    //if (indiceCodigoDescuento !== -1) {
-        //let precioTotalSinDescuentos = calcularTotalSinDescuentos(carrito); // Calcula el total sin contar descuentos
-        //let descuentoCodigo = precioTotalSinDescuentos * 0.05; // Descuento del 5%
-        //carrito[indiceCodigoDescuento][idCodigoDescuento].precio = -descuentoCodigo.toFixed(2);
-        //precioTotal -= descuentoCodigo; // Restar el descuento
-    //}
+    // Verificar si el código de descuento está en el carrito
+    const indiceCodigoDescuento = carrito.findIndex(item => Object.keys(item)[0] === idCodigoDescuento);
 
-    // Actualizar el precio total
+    if (indiceCodigoDescuento !== -1) {
+        let precioTotalSinDescuentos = carrito.reduce((total, producto) => {
+        let productoId = Object.keys(producto)[0];
+        let detalles = producto[productoId];
+        return detalles.nombre.includes("Descuento") ? total : total + detalles.precio * detalles.cantidad;
+    }, 0);
+
+    let descuentoCodigo = precioTotalSinDescuentos * 0.05; // Descuento del 5%
+    carrito[indiceCodigoDescuento][idCodigoDescuento].precio = -descuentoCodigo.toFixed(2);
+    precioTotal -= descuentoCodigo; // Restar el descuento
+    }
+
     precioTotalP.textContent = `${precioTotal.toFixed(2)}`;
 
     // Crear el carrito visualmente
@@ -292,14 +353,31 @@ function actualizarCarrito(carrito) {
         input.addEventListener("input", function () {
             const productoId = this.dataset.id;
             let nuevaCantidad = parseInt(this.value);
+            const divProducto = this.closest('.productosCarritoDesplegable');
+            const mensajeMaximo = divProducto.querySelector(".aviso-limite");
+            const productoEnCarrito = carrito.find(item => Object.keys(item)[0] == productoId);
+            if (nuevaCantidad > 20) {
+                this.value=20;
+                nuevaCantidad = 20;
+                productosConExceso20.push(productoId)
+            } 
             if (nuevaCantidad === 0) {
-                borrarProductoCarrito(productoId);
+                borrarProductoCarrito(productoId, divProducto);
                 return;
             }
-            const productoEnCarrito = carrito.find(item => Object.keys(item)[0] == productoId);
+            
             if (productoEnCarrito) {
                 productoEnCarrito[productoId].cantidad = nuevaCantidad;
                 actualizarCarrito(carrito);
+                productosConExceso20.forEach(id => {
+                    const divProducto = document.querySelector(`.cantidad-carrito[data-id="${id}"]`)?.closest('.productosCarritoDesplegable');
+                    if (divProducto) {
+                        const mensajeMaximo = divProducto.querySelector(".aviso-limite");
+                        if (mensajeMaximo) {
+                            mostrarMensaje(mensajeMaximo);
+                        }
+                    }
+                })
             }
         });
     });
@@ -536,6 +614,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!codigoIngresado) {
             mensajeDescuento.textContent = "❌ Ingresa un código de descuento.";
             mensajeDescuento.style.color = "red";
+            setTimeout(() => {
+                mensajeDescuento.textContent = "";
+            }, 5000);
             return;
         }
 
@@ -545,6 +626,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
             mensajeDescuento.textContent = "✅ Código aplicado correctamente.";
             mensajeDescuento.style.color = "green";
+            setTimeout(() => {
+                mensajeDescuento.textContent = "";
+            }, 5000);
 
             // Verificar si el descuento ya está en el carrito
             const indiceCodigo = carrito.findIndex(item => Object.keys(item)[0] === idCodigoDescuento);
@@ -567,6 +651,9 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
             mensajeDescuento.textContent = "❌ Código inválido.";
             mensajeDescuento.style.color = "red";
+            setTimeout(() => {
+                mensajeDescuento.textContent = "";
+            }, 5000);
             // Si el código era incorrecto y había un descuento, lo eliminamos
             const indiceCodigo = carrito.findIndex(item => Object.keys(item)[0] === idCodigoDescuento);
             if (indiceCodigo !== -1) {
