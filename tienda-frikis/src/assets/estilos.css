@@ -1,0 +1,493 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+body{ 
+    background-repeat: repeat-y repeat-x; 
+    background-image: url("../imagenes/fondoHojaPagina.png"); 
+    background-size: 20px 20px; 
+}
+
+.container-fluid {
+    background-color: white;
+    border: 1px solid rgb(217, 217, 217);
+}
+
+/*************************** 
+    CONTENEDOR DE TODO
+***************************/
+.contenido {
+    width: 90%;
+    min-height: 100vh;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+/*************************** 
+    HEADER Y MENU SUPERIOR
+***************************/
+header {
+    top: 0; 
+    /*position: fixed;  Fijamos la cabecera en la parte superior de la pantalla*/
+    color: black; 
+    text-align: center; 
+    z-index: 1000;
+}
+
+/* Titulo de la pagina */
+header h1 {
+    font-family: 'monospace'; 
+    font-size: 3rem; /* Aumentamos el tamaño del titulo */
+    color: rgb(83, 83, 83); /* Color oscuro para resaltar */
+    text-align: center; /* Centra el texto */
+    font-weight: bold; /* Aumenta el grosor de la fuente */
+    text-transform: uppercase; /* Convertir el texto a mayúsculas */
+    letter-spacing: 2px; /* Ajustar espacio entre letras */
+}
+
+/* Menu Superior */
+/* ??? CUIDADO ESTE NAV CAMBIA TAMBIEN EL DE PAGINACION*/
+header nav {
+    background-color: rgb(121, 121, 121); 
+    color: white;
+}
+
+ul {
+    list-style:none; 
+    overflow: hidden; 
+    margin:0 !important; 
+    padding : 0;
+}
+    
+li {
+    float:left; 
+    padding: 10px 20px;
+}
+
+li a {
+    text-decoration: none; 
+    color:white
+}
+
+li:hover {background-color: rgb(164, 188, 164);}
+li:hover a { text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000; }
+
+li#mostrarBotonCarrito{display: none;}
+
+/*************************** 
+    TITULO Y BUSCADOR
+***************************/ 
+.col-9{
+    border: 1px solid rgb(217, 217, 217);
+}
+
+/* Contenedor del titulo y buscador */
+#infoMain{
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 0;
+}
+
+/* Estilo del titulo */
+h2#titulo {
+    font-family: 'monospace'; 
+}
+
+/* Input del buscador */
+#search-bar { 
+    width: 25%; 
+    padding: 5px; 
+    float: right; 
+    margin: 20px 0 !important;
+}
+
+
+/*************************** 
+    CATALOGO DE PRODUCTOS
+***************************/ 
+
+/* Ajustar apariencia de cada contenedor de producto */
+.card{ 
+    height: 100% !important; /* Para que todos los articulos ocupen lo mismo de alto independientemente del texto que tengan */
+}
+
+.card-title, .card-text { 
+    display: -webkit-box !important; /* Usa un contenedor de tipo caja flexible */
+    -webkit-line-clamp: 2; /* Limitar el número de líneas visibles a 2 */
+    -webkit-box-orient: vertical; /* Establece la orientación de la caja a vertical */
+    overflow: hidden; /* Oculta el contenido que sobrepasa las 2 líneas */
+    text-overflow: ellipsis; /* Añade '...' al final del texto recortado */
+    line-clamp: 2; /* Propiedad estándar */
+    box-orient: vertical; /* Propiedad estándar para la orientación de la caja */
+}
+
+.card-img-top  {
+    width: 100%; /* Ocupar todo el ancho de la card */
+    height: 200px; /* Definir una altura fija */
+    object-fit: contain; /* Ajustar la imagen sin deformarla (con cover haze un zoom y todas se ven igual pero algunas se cortan !!! )*/
+}
+
+/* Diseño del boton de añadir al carrito */
+.boton-carrito {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    float: right;
+}
+
+.boton-carrito img { /* Ajustar tamaño de la imagen del carrito */
+    height: 20px;
+    width: 20px;
+}
+
+.boton-carrito .btn-primary {
+    background-color: rgb(66, 194, 107) !important;
+    border: 1px solid black;
+    border-radius: 30px;}
+
+.mensaje-añadido {
+    position: absolute;
+    top: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgb(66, 194, 107); /* Verde translúcido */
+    color: black;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: none; /* Inicialmente oculto */
+    font-size: 14px;
+    border: 1px solid black;
+}
+
+.mensaje-rechazado {
+    position: absolute;
+    top: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgb(231, 87, 68); /* Verde translúcido */
+    color: black;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: none; /* Inicialmente oculto */
+    font-size: 14px;
+    border: 1px solid black;
+}
+
+/*************************** 
+FORMULARIO DE AÑADIR PRODUCTO 
+***************************/ 
+
+aside {
+    border: 1px solid rgb(217, 217, 217);
+    border-radius: 15px;
+    margin-top: 20px;
+    margin-bottom: 60px; /*Añadimos espacio por si se muestran pocos productos y se tapa el formulario*/
+}
+
+aside h4 {
+    text-align: center;
+    font-size: 18px;
+    color:white;
+    background-color: rgb(121, 121, 121);
+    border-top-left-radius: 13px;
+    border-top-right-radius: 13px;
+    padding: 10px 0;
+}
+
+select, input, textarea{ 
+    margin: 20px auto !important; 
+    width: 90%; 
+    padding: 7px; 
+    border-radius: 5px; 
+    border: 1px solid #ccc; 
+    display:block;
+}
+
+/* Decorar boton de enviar */
+input[type="button"] {
+    background-color: rgb(121, 121, 121); 
+    color:white;
+}
+
+.custom-file-input { /* Oculta el input original */
+    display: none; 
+}
+
+.custom-file-container {/* Contenedor del input y el nombre del archivo */
+    display: flex;
+    align-items: center;
+    width: 90%;
+    margin: 20px auto;
+}
+
+.custom-file-label { /* Botón de examinar */
+    padding: 6px 12px;
+    cursor: pointer;
+    background-color: #f8f9fa; /* Fondo claro */
+    border: 1px solid #ced4da;
+    border-radius: 4px 0 0 4px;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.custom-file-name { /* Recuadro del nombre del archivo */
+    flex-grow: 1;
+    padding: 6px 12px;
+    border: 1px solid #ced4da;
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+    font-size: 14px;
+    color: #6c757d; /* Texto en gris */
+    background-color: #ffffff;
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* Diseñar contenedor de Drag & Drop */
+.drop-area {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    text-align: center;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    margin: 20px auto;
+    width: 90%;
+    border-radius: 5px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.drop-area:hover {
+    background-color: #e9e9e9;
+}
+
+.drop-area.active {
+    background-color: #d1e7fd; /* Azul claro cuando se arrastra un archivo encima */
+    border-color: #007bff;
+}
+
+/* Diseñar mensajes a mostrar debido a algun error o creacion de producto correcta */
+#mensajeError {
+    width:85%;
+    background-color: rgb(255, 187, 178); /* Verde translúcido */
+    color: black;
+    border-radius: 5px;
+    display: none; /* Inicialmente oculto */
+    font-size: 14px;
+    text-align: center;
+    border: 1px solid rgb(171, 70, 70);
+    margin: 10px auto;
+    padding: 15px;
+}
+
+#mensajeProductoNuevo{
+    width:85%;
+    background-color: rgb(199, 255, 178); /* Verde translúcido */
+    color: black;
+    border-radius: 5px;
+    display: none;  /*Inicialmente oculto */
+    font-size: 14px;
+    text-align: center;
+    border: 1px solid rgb(70, 171, 80);
+    margin: 10px auto;
+    padding: 15px;
+}
+
+
+/*************************** 
+        CARRITO 
+***************************/ 
+.offcanvas-header, .offcanvas-footer {
+    background-color: rgb(121, 121, 121) ; 
+    color:white;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px !important;
+}
+
+.precioXcantidad{
+    display: inline-block;
+}
+
+.precioXcantidad p, .offcanvas-footer p{
+    display: inline-block;
+    margin: 0 !important;
+}
+
+.precioXcantidad input {
+    display: inline-block;
+    width: 40px;
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: center;
+}
+
+.aviso-limite {
+    border: 2px dashed rgb(220, 53, 69); /* 2px de grosor, rayas discontinuas negras */
+    border-radius: 15px;
+    background-color: rgb(255 187 164);
+    text-align: center;
+    margin-top: 5px;
+    display:none;
+    margin-bottom: 20px; /* Dejar un espacio entre el aviso y el siguiente producto del carrito*/
+}
+
+.aviso-limite p{
+    margin: 10px 0;
+}
+
+.offcanvas-footer input {
+    display: inline-block;
+    width: 80px;
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: center;
+}
+
+/*************************** 
+MOSTRAR INFORMACION COMPLETA
+***************************/
+
+/* Añadir contenedor de pantalla completa para la opacidad */
+#div1-opacidad {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1500;
+}
+
+/* Ajustar detalles del contenedor de la informacion del producto */
+#div2-detallesProducto {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 50%;
+    background-color: white;
+    transform: translate(-50%, -50%); /* Centra el div */
+    padding: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    z-index: 1501; /*Por encima del div1*/
+    display : flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.infoProducto .col-4 img {
+    width: 100%;
+    height: auto; /* Mantiene la relación de aspecto */
+    display: block;
+}
+
+/* Establecer un límite de altura y permite scroll si es necesario */
+.infoProducto .col-8 {
+    max-height: 400px; /* Ajusta según necesidad */
+    overflow-y: auto;
+    padding-right: 10px; /* Para evitar que el texto toque el borde */
+}
+
+.infoProducto .col-8 h3 {
+    background-color: rgb(121, 121, 121); 
+    color: white;
+    border-radius: 8px ;
+    font-size: 30px;
+    text-align: center;
+    padding: 10px 0;
+}
+
+.infoProducto p {
+    font-size: 20px;
+}
+
+
+/*************************** 
+        PAGINACION 
+***************************/ 
+.paginacion-nav {
+    background-color: transparent !important;
+    border-radius: 5px;
+    margin-bottom: 0px;
+    padding: 10px 0;
+    box-shadow: none !important;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+    
+}
+
+.page-item {
+    background: none !important;
+    margin: 0 2px; /* Reduce el espacio entre botones */
+}
+
+.page-link {
+    background-color: white !important; /* Asegura el fondo blanco */
+    color: #007bff !important; /* Mantiene el color azul de Bootstrap */
+    border: 1px solid #ddd; /* Agrega un borde para que se vea mejor */
+}
+
+.page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+.page-link:focus, 
+.page-link:active,
+.page-item:focus, 
+.page-item:active {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: transparent !important; /* Eliminar borde si es necesario */
+}
+
+
+
+/*************************** 
+        FOOTER
+***************************/ 
+footer {
+    position: relative; 
+    left: 0; 
+    bottom: 0; 
+    width: 100%; 
+    background-color: rgb(121, 121, 121); 
+    color: white; 
+    text-align: center;
+    margin-top: auto;
+}
+
+footer p {
+    margin: 0;
+    padding: 10px 0;
+}
+
+/*************************** 
+        PROMO BANNER 
+***************************/ 
+
+.promo-banner {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+}
+.promo-banner p {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0;
+}
