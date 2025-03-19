@@ -80,7 +80,20 @@ li a {
 li:hover {background-color: rgb(164, 188, 164);}
 li:hover a { text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000; }
 
-li#mostrarBotonCarrito{display: none;}
+li#mostrarBotonCarrito{display: block;}
+
+li#mostrarBotonCarrito button {
+    background-color: rgb(83, 83, 83) !important;
+    border: 1px solid rgb(66, 66, 66);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+li#mostrarBotonCarrito button:hover {
+    background-color: rgb(121, 121, 121) !important;
+}
+
 
 /*************************** 
     TITULO Y BUSCADOR
@@ -149,10 +162,24 @@ h2#titulo {
     width: 20px;
 }
 
-.boton-carrito .btn-primary {
+.boton-carrito .btn-primary,
+.boton-carrito button.btn-primary,
+.boton-carrito .card .btn-primary,
+.card .btn-primary {
     background-color: rgb(66, 194, 107) !important;
-    border: 1px solid black;
-    border-radius: 30px;}
+    border: 1px solid black !important;
+    border-radius: 30px !important;
+    color: white !important;
+    font-weight: bold !important;
+    box-shadow: none !important;
+}
+
+.boton-carrito .btn-primary:hover,
+.boton-carrito button.btn-primary:hover,
+.boton-carrito .card .btn-primary:hover,
+.card .btn-primary:hover {
+    background-color: rgb(89, 225, 120) !important;
+}
 
 .mensaje-añadido {
     position: absolute;
@@ -307,12 +334,38 @@ input[type="button"] {
 /*************************** 
         CARRITO 
 ***************************/ 
+.btn-close {
+    background: transparent !important;
+    border: none !important;
+    font-size: 1.5rem;
+    line-height: 1;
+    opacity: 1;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
+
 .offcanvas-header, .offcanvas-footer {
     background-color: rgb(121, 121, 121) ; 
     color:white;
     align-items: center;
     justify-content: space-between;
     padding: 16px !important;
+}
+
+.offcanvas.offcanvas-start {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+}
+
+.offcanvas.show {
+    transform: translateX(0);
+}
+
+.offcanvas.offcanvas-end {
+    left: 0 !important;
+    right: auto !important;
 }
 
 .precioXcantidad{

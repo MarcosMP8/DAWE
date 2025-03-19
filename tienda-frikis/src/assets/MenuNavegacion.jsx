@@ -6,9 +6,9 @@ const MenuNavegacion = () => {
       <ul>
         <li><a href="#">Inicio</a></li>
         <li id="mostrarBotonCarrito">
-          <a data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
-            Carrito
-          </a>
+          <button className="btn btn-primary" onClick={() => document.getElementById("offcanvasCarrito").classList.add("show")}>
+            🛒 Carrito
+          </button>
         </li>
       </ul>
     </nav>

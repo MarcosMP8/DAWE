@@ -17,8 +17,11 @@ const FormularioNuevosProductos = ({ agregarProducto }) => {
   };
 
   const manejarImagen = (file) => {
-    const urlImagen = URL.createObjectURL(file);
-    setProducto({ ...producto, imagen: urlImagen });
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setProducto({ ...producto, imagen: reader.result });
+    };
   };
 
   const manejarEnvio = (e) => {
