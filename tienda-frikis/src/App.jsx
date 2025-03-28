@@ -8,11 +8,8 @@ import FormularioNuevosProductos from "./assets/FormularioNuevosProductos.jsx";
 import Pie from "./assets/Pie.jsx";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./assets/estilos.css";
+import MenuNavegacion from "./assets/MenuNavegacion.jsx";
 
-const cargarProductosDesdeLocalStorage = () => {
-  const productosGuardados = localStorage.getItem("productos");
-  return productosGuardados ? JSON.parse(productosGuardados) : [];
-};
 
 const cargarCarritoDesdeLocalStorage = () => {
   const carritoGuardado = localStorage.getItem("carrito");
@@ -21,7 +18,7 @@ const cargarCarritoDesdeLocalStorage = () => {
 
 const productosEjemplo = [
   // Videojuegos
-  { id: 1, nombre: "Super Mario World", precio: 14.99, descripcion: "La primera aventura de Mario y Luigi para SNES.", imagen: "/imagenes/Videojuegos/super_mario_world.webp" },
+  { id: 1, nombre: "Super Mario World", precio: 14.99, descripcion: "La primera aventura de Mario y Luigi para Super NES los condujo a un mundo de nuevos personajes, habilidades y mucho más, convirtiéndolo en uno de los videojuegos de mayor éxito de todos los tiempos. En esta entrega, los hermanos fontaneros se dirigen a la Tierra de los dinosaurios, donde conocen a Yoshi (su nuevo y adorable compañero) y luchan contra Bowser y sus secuaces a lo largo de difíciles niveles cargados de secretos. Además de montar sobre Yoshi y tragar enemigos, podrás volar a lo más alto gracias a la Capa de Pluma.", imagen: "/imagenes/Videojuegos/super_mario_world.webp" },
   { id: 2, nombre: "The Legend of Zelda: A Link to the Past", precio: 9.99, descripcion: "Aventura épica en Hyrule.", imagen: "/imagenes/Videojuegos/legendOfZelda.jpg" },
   { id: 3, nombre: "Street Fighter II", precio: 7.99, descripcion: "Juego de lucha clásico de Capcom.", imagen: "/imagenes/Videojuegos/streetFighter2.jpg" },
   { id: 4, nombre: "Grand Theft Auto V", precio: 19.99, descripcion: "Un mundo abierto de crimen y acción.", imagen: "/imagenes/Videojuegos/GTAV.jpg" },
@@ -58,6 +55,7 @@ const productosEjemplo = [
 ];
 
 const App = () => {
+  const [estaOffline, setEstaOffline] = useState(false);
   const [productos, setProductos] = useState(() => {
     const productosGuardados = localStorage.getItem("productos");
     if (productosGuardados && JSON.parse(productosGuardados).length > 0) {
@@ -73,6 +71,24 @@ const App = () => {
   const productosPorPagina = 6;
 
   useEffect(() => {
+    const actualizarEstadoConexion = () => {
+      setEstaOffline(!navigator.onLine);
+    };
+  
+    window.addEventListener("online", actualizarEstadoConexion);
+    window.addEventListener("offline", actualizarEstadoConexion);
+  
+    // Establece el estado inicial al cargar
+    actualizarEstadoConexion();
+  
+    return () => {
+      window.removeEventListener("online", actualizarEstadoConexion);
+      window.removeEventListener("offline", actualizarEstadoConexion);
+    };
+  }, []);
+  
+
+  useEffect(() => {
     console.log("Productos guardados en localStorage:", productos);
     localStorage.setItem("productos", JSON.stringify(productos));
   }, [productos]);  
@@ -81,18 +97,26 @@ const App = () => {
     localStorage.setItem("carrito", JSON.stringify(carrito));
   }, [carrito]);
 
-  const filtrarProductos = (texto) => {
-    setBusqueda(texto);
-    const productosFiltrados = productos.filter((p) =>
-      p.nombre.toLowerCase().includes(texto.toLowerCase())
-    );
-    setProductos(productosFiltrados);
-  };
+  // 🔍 Filtrado de productos en base a búsqueda
+  const productosFiltrados = productos.filter((p) =>
+    p.nombre.toLowerCase().includes(busqueda.toLowerCase())
+  );
 
+  // 🔢 Calculo de paginación
+  const totalPaginas = Math.ceil(productosFiltrados.length / productosPorPagina);
+  const productosPagina = productosFiltrados.slice(
+    (paginaActual - 1) * productosPorPagina,
+    paginaActual * productosPorPagina
+  );
+
+  // 📥 Agregar producto nuevo
   const agregarProducto = (nuevoProducto) => {
-    setProductos([...productos, { ...nuevoProducto, id: productos.length + 1 }]);
+    const nuevo = { ...nuevoProducto, id: productos.length + 1 };
+    const nuevosProductos = [...productos, nuevo];
+    setProductos(nuevosProductos);
   };
 
+  // 🛒 Agregar al carrito
   const agregarAlCarrito = (producto) => {
     setCarrito((prevCarrito) => {
       const existe = prevCarrito.find((item) => item.id === producto.id);
@@ -103,28 +127,40 @@ const App = () => {
       }
       return [...prevCarrito, { ...producto, cantidad: 1 }];
     });
-  };  
+  };
 
+  // 🔁 Cambio de página
   const cambiarPagina = (pagina) => {
     setPaginaActual(pagina);
   };
 
-  const totalPaginas = Math.ceil(productos.length / productosPorPagina);
-  const productosPagina = productos.slice((paginaActual - 1) * productosPorPagina, paginaActual * productosPorPagina);
+  // 🧼 Resetear a la página 1 cuando cambia la búsqueda
+  const manejarBusqueda = (texto) => {
+    setBusqueda(texto);
+    setPaginaActual(1);
+  };
 
   return (
     <div className="contenido">
-      <Cabecera />
+      <Cabecera estaOffline={estaOffline} />
       <div className="container-fluid mt-3">
         <div className="row">
           <div className="col-md-8">
-            <BuscadorProductos onBuscar={filtrarProductos} />
-            <EscaparateProductos productos={productosPagina} agregarAlCarrito={agregarAlCarrito} />
-            <Paginacion paginaActual={paginaActual} totalPaginas={totalPaginas} cambiarPagina={cambiarPagina} />
+            <EscaparateProductos
+              productos={productosPagina}
+              agregarAlCarrito={agregarAlCarrito}
+              busqueda={busqueda}
+              setBusqueda={manejarBusqueda}
+            />
+            <Paginacion
+              paginaActual={paginaActual}
+              totalPaginas={totalPaginas}
+              cambiarPagina={cambiarPagina}
+            />
           </div>
           <div className="col-md-4">
-          <Carrito carrito={carrito} setCarrito={setCarrito} />
-          <FormularioNuevosProductos agregarProducto={agregarProducto} />
+            <Carrito carrito={carrito} setCarrito={setCarrito} />
+            <FormularioNuevosProductos agregarProducto={agregarProducto} estaOffline={estaOffline}/>
           </div>
         </div>
       </div>

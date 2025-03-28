@@ -13,7 +13,7 @@ const BuscadorProductos = ({ onBuscar }) => {
     <div id="infoMain">
       <h2 id="titulo">Todos los productos</h2>
       <input
-        type="text"
+        type="text"ks
         id="search-bar"
         placeholder="Buscar producto..."
         value={busqueda}

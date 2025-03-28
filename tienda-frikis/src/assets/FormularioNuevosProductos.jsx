@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
+import "./../assets/estilos.css";
 
 const fileTypes = ["JPG", "PNG", "GIF"];
 
-const FormularioNuevosProductos = ({ agregarProducto }) => {
+const FormularioNuevosProductos = ({ agregarProducto, estaOffline }) => {
   const [producto, setProducto] = useState({
     tipo: "",
     nombre: "",
@@ -31,29 +32,35 @@ const FormularioNuevosProductos = ({ agregarProducto }) => {
   };
 
   return (
-    <aside>
+    <aside className={estaOffline ? "formulario-desactivado" : ""}>
       <h4>Añadir Producto</h4>
+
+      {estaOffline && (
+        <div className="alert alert-danger text-center mt-2" role="alert">
+          ⚠️ Estás desconectado. No puedes añadir productos ahora.
+        </div>
+      )}
+
       <form onSubmit={manejarEnvio}>
-        <select name="tipo" value={producto.tipo} onChange={manejarCambio}>
-          <option value="" disabled>Escoge un tipo</option>
-          <option value="T1">Videojuego</option>
-          <option value="T2">Libro</option>
-          <option value="T3">Merchandising</option>
-          <option value="T4">Puzzle</option>
-          <option value="T5">Juego de Mesa</option>
-        </select>
+        <fieldset disabled={estaOffline}>
+          <select name="tipo" value={producto.tipo} onChange={manejarCambio}>
+            <option value="" disabled>Escoge un tipo</option>
+            <option value="T1">Videojuego</option>
+            <option value="T2">Libro</option>
+            <option value="T3">Merchandising</option>
+            <option value="T4">Puzzle</option>
+            <option value="T5">Juego de Mesa</option>
+          </select>
 
-        <input type="text" name="nombre" placeholder="Nombre" value={producto.nombre} onChange={manejarCambio} />
-        <input type="number" name="precio" placeholder="Precio" value={producto.precio} onChange={manejarCambio} />
-        <textarea name="descripcion" placeholder="Descripción" value={producto.descripcion} onChange={manejarCambio}></textarea>
+          <input type="text" name="nombre" placeholder="Nombre" value={producto.nombre} onChange={manejarCambio} />
+          <input type="number" name="precio" placeholder="Precio" value={producto.precio} onChange={manejarCambio} />
+          <textarea name="descripcion" placeholder="Descripción" value={producto.descripcion} onChange={manejarCambio}></textarea>
 
-        {/* Drag & Drop de imágenes */}
-        <FileUploader handleChange={manejarImagen} name="file" types={fileTypes} />
+          <FileUploader handleChange={manejarImagen} name="file" types={fileTypes} />
+          {producto.imagen && <img src={producto.imagen} alt="Vista previa" width="100" />}
 
-        {/* Vista previa de la imagen */}
-        {producto.imagen && <img src={producto.imagen} alt="Vista previa" width="100" />}
-
-        <button type="submit">Subir Producto</button>
+          <button type="submit">Subir Producto</button>
+        </fieldset>
       </form>
     </aside>
   );
