@@ -32,7 +32,7 @@ const EscaparateProductos = ({ productos, agregarAlCarrito, busqueda, setBusqued
                   alt={producto.nombre}
                   onClick={() => setProductoSeleccionado(producto)}
                   style={{ cursor: "pointer" }}
-                  onError={(e) => (e.target.src = "/imagenes/ProductoSinImagen.png")}
+                  onError={(e) => (e.target.src = "/imagenes/sinImagen.png")}
                 />
                 <div className="card-body">
                   <h5 className="card-title">{producto.nombre}</h5>

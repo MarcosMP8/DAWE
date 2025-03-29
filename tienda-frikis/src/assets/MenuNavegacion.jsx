@@ -1,5 +1,6 @@
 import React from "react";
 import "./estilos.css";
+import carritoImg from "../imagenes/carrito.png";
 
 const MenuNavegacion = ({ estaOffline }) => {
   return (
@@ -12,7 +13,8 @@ const MenuNavegacion = ({ estaOffline }) => {
             document.getElementById("offcanvasCarrito")?.classList.add("show")
           }
           >
-            🛒 Carrito
+            <img src={carritoImg} alt="Carrito" width="24" height="24" className="me-2" />
+            Carrito
           </button>
         </li>
       </ul>

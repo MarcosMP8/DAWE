@@ -590,3 +590,15 @@ footer p {
     opacity: 0.5;
     pointer-events: none;
   }
+
+
+
+
+
+
+  .alert-success {
+    font-weight: bold;
+    text-align: center;
+    border-radius: 8px;
+  }
+  

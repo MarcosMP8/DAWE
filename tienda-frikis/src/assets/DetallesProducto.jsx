@@ -25,7 +25,7 @@ const DetallesProducto = ({ producto, onClose }) => {
               <img
                 src={producto.imagen}
                 alt={producto.nombre}
-                onError={(e) => e.target.src = "/imagenes/ProductoSinImagen.png"}
+                onError={(e) => e.target.src = "/imagenes/sinImagen.png"}
               />
             </div>
             <div className="col-8">
