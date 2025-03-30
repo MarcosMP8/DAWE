@@ -22,11 +22,11 @@ const DetallesProducto = ({ producto, onClose }) => {
         <div className="container">
           <div className="row infoProducto">
             <div className="col-4">
-              <img
-                src={producto.imagen}
-                alt={producto.nombre}
-                onError={(e) => e.target.src = "/imagenes/sinImagen.png"}
-              />
+            <img
+              src={producto.imagen || "../imagenes/sinImagen.png"}
+              alt={producto.nombre}
+              onError={(e) => e.target.src = "../imagenes/sinImagen.png"}
+            />
             </div>
             <div className="col-8">
               <h3>{producto.nombre}</h3>

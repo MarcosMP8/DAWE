@@ -96,6 +96,9 @@ const App = () => {
   return (
     <div className="contenido">
       <Cabecera estaOffline={estaOffline} />
+      <div className="promo-banner">
+      <p>¡Descuento especial: -15% en Juegos de Mesa si superas 30€!</p>
+      </div>
       <div className="container-fluid mt-3">
         <div className="row">
           <div className="col-md-8">

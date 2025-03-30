@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./estilos.css";
 
+const MAX_COPIAS = 20;
+
 const Carrito = ({ carrito, setCarrito }) => {
   const [total, setTotal] = useState(0);
   const [codigoDescuento, setCodigoDescuento] = useState("");
@@ -51,11 +53,18 @@ const Carrito = ({ carrito, setCarrito }) => {
   // 🔄 Modificar cantidades (excepto el descuento)
   const modificarCantidad = (id, cambio) => {
     setCarrito((prevCarrito) =>
-      prevCarrito.map((item) =>
-        item.id === id
-          ? { ...item, cantidad: Math.min(10, Math.max(1, item.cantidad + cambio)) }
-          : item
-      )
+      prevCarrito.map((item) => {
+        if (item.id === id) {
+          let nuevaCantidad = item.cantidad + cambio;
+          if (nuevaCantidad > MAX_COPIAS) {
+            nuevaCantidad = MAX_COPIAS;
+          } else if (nuevaCantidad < 1) {
+            nuevaCantidad = 1;
+          }
+          return { ...item, cantidad: nuevaCantidad };
+        }
+        return item;
+      })
     );
   };
 

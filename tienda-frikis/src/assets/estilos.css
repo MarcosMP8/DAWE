@@ -591,14 +591,27 @@ footer p {
     pointer-events: none;
   }
 
-
-
-
-
-
   .alert-success {
     font-weight: bold;
     text-align: center;
     border-radius: 8px;
   }
+
+/*Banner promo*/
+.promo-banner {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+}
+.promo-banner p {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0;
+}
+
+  
   

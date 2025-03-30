@@ -16,7 +16,6 @@ const EscaparateProductos = ({ productos, agregarAlCarrito, busqueda, setBusqued
 
   return (
     <section className="container mt-3">
-      <h2 className="mb-3">Todos los productos</h2>
       <BuscadorProductos valorBusqueda={busqueda} onBuscar={setBusqueda} />
 
       <div id="contenedorProductos" className="row">
@@ -26,14 +25,15 @@ const EscaparateProductos = ({ productos, agregarAlCarrito, busqueda, setBusqued
           productos.map((producto) => (
             <article key={producto.id} className="col-md-4 mb-4">
               <div className="card">
-                <img
-                  src={producto.imagen}
-                  className="card-img-top"
-                  alt={producto.nombre}
-                  onClick={() => setProductoSeleccionado(producto)}
-                  style={{ cursor: "pointer" }}
-                  onError={(e) => (e.target.src = "/imagenes/sinImagen.png")}
-                />
+              <img
+                src={producto.imagen || "/imagenes/sinImagen.png"}
+                className="card-img-top"
+                alt={producto.nombre}
+                onClick={() => setProductoSeleccionado(producto)}
+                style={{ cursor: "pointer" }}
+                onError={(e) => (e.target.src = "/imagenes/sinImagen.png")}
+              />
+
                 <div className="card-body">
                   <h5 className="card-title">{producto.nombre}</h5>
                   <p className="text-muted">
