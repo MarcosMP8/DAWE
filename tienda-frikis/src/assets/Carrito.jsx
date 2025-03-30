@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from "react";
 import "./estilos.css";
 
-const MAX_COPIAS = 20;
+const MAX_CANTIDAD = 20;
 
 const Carrito = ({ carrito, setCarrito }) => {
   const [total, setTotal] = useState(0);
   const [codigoDescuento, setCodigoDescuento] = useState("");
   const [descuentoAplicado, setDescuentoAplicado] = useState(false);
-  const [descuentoJuegos, setDescuentoJuegos] = useState(0);
   const [mensajeDescuento, setMensajeDescuento] = useState(null);
 
-
-  // 🧮 Calcular total cada vez que cambia el carrito o se aplica un descuento
   useEffect(() => {
     localStorage.setItem("carrito", JSON.stringify(carrito));
     calcularTotal();
@@ -19,19 +16,9 @@ const Carrito = ({ carrito, setCarrito }) => {
 
   const calcularTotal = () => {
     let total = carrito.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
-    let descuentoJuegos = 0;
-
-    const juegosDeMesa = carrito.filter(item => item.tipo === "T5");
-    if (juegosDeMesa.length > 0 && total > 30) {
-      descuentoJuegos = total * 0.15;
-      total -= descuentoJuegos;
-    }
-
-    setDescuentoJuegos(descuentoJuegos);
     setTotal(total.toFixed(2));
   };
 
-  // 🧾 Aplicar código de descuento
   const aplicarCodigoDescuento = () => {
     if (codigoDescuento === "INVIERNO25" && !descuentoAplicado) {
       setDescuentoAplicado(true);
@@ -40,35 +27,57 @@ const Carrito = ({ carrito, setCarrito }) => {
       setMensajeDescuento({ tipo: "error", texto: "❌ Código no válido o ya aplicado." });
     }
     setCodigoDescuento("");
-  
-    // Limpiar mensaje tras 3 segundos
+
     setTimeout(() => setMensajeDescuento(null), 3000);
   };
 
-  // 🗑️ Eliminar productos (excepto el descuento)
   const eliminarProducto = (id) => {
     setCarrito(carrito.filter((producto) => producto.id !== id));
   };
 
-  // 🔄 Modificar cantidades (excepto el descuento)
   const modificarCantidad = (id, cambio) => {
     setCarrito((prevCarrito) =>
-      prevCarrito.map((item) => {
-        if (item.id === id) {
-          let nuevaCantidad = item.cantidad + cambio;
-          if (nuevaCantidad > MAX_COPIAS) {
-            nuevaCantidad = MAX_COPIAS;
-          } else if (nuevaCantidad < 1) {
-            nuevaCantidad = 1;
-          }
-          return { ...item, cantidad: nuevaCantidad };
-        }
-        return item;
-      })
+      prevCarrito.map((item) =>
+        item.id === id
+          ? { ...item, cantidad: Math.min(MAX_CANTIDAD, Math.max(1, item.cantidad + cambio)) }
+          : item
+      )
     );
   };
 
-  // 🎁 Añadir o actualizar el producto "Descuento 5%" dinámicamente
+  // 💰 Descuento automático del 15% en juegos de mesa (tipo T5)
+  useEffect(() => {
+    const juegosDeMesa = carrito.filter((item) => item.tipo === "T5");
+    const totalJuegos = juegosDeMesa.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
+    const yaExiste = carrito.find((item) => item.id === "descuentoJuegos");
+
+    if (totalJuegos > 30) {
+      const descuento = parseFloat((totalJuegos * 0.15).toFixed(2));
+      if (!yaExiste) {
+        setCarrito((prev) => [
+          ...prev,
+          {
+            id: "descuentoJuegos",
+            nombre: "Descuento Juegos de Mesa",
+            precio: -descuento,
+            cantidad: 1,
+            tipo: "descuento",
+            imagen: "/imagenes/descuento.jpg",
+          },
+        ]);
+      } else {
+        setCarrito((prev) =>
+          prev.map((item) =>
+            item.id === "descuentoJuegos" ? { ...item, precio: -descuento } : item
+          )
+        );
+      }
+    } else if (yaExiste) {
+      setCarrito((prev) => prev.filter((item) => item.id !== "descuentoJuegos"));
+    }
+  }, [carrito]);
+
+  // 🎁 Descuento 5% por código
   useEffect(() => {
     if (descuentoAplicado) {
       const totalSinDescuento = carrito
@@ -85,7 +94,7 @@ const Carrito = ({ carrito, setCarrito }) => {
         setCarrito((prev) => [
           ...prev,
           {
-            id: "descuento",
+            id: "descuento5",
             nombre: "Descuento 5%",
             precio: -descuento,
             cantidad: 1,
@@ -96,9 +105,7 @@ const Carrito = ({ carrito, setCarrito }) => {
       } else {
         setCarrito((prev) =>
           prev.map((item) =>
-            item.nombre === "Descuento 5%"
-              ? { ...item, precio: -descuento }
-              : item
+            item.nombre === "Descuento 5%" ? { ...item, precio: -descuento } : item
           )
         );
       }
@@ -120,7 +127,7 @@ const Carrito = ({ carrito, setCarrito }) => {
           type="button"
           className="btn-close"
           onClick={() =>
-            document.getElementById("offcanvasCarrito").classList.remove("show")
+            document.getElementById("offcanvasCarrito")?.classList.remove("show")
           }
         >
           ✖
@@ -149,8 +156,7 @@ const Carrito = ({ carrito, setCarrito }) => {
                   {(producto.precio * producto.cantidad).toFixed(2)}€
                 </p>
 
-                {/* Cantidad solo editable si no es el producto descuento */}
-                {producto.nombre !== "Descuento 5%" ? (
+                {producto.tipo !== "descuento" ? (
                   <div className="d-flex align-items-center">
                     <button
                       className="btn btn-secondary btn-sm"
@@ -171,8 +177,7 @@ const Carrito = ({ carrito, setCarrito }) => {
                 )}
               </div>
 
-              {/* Botón eliminar solo si no es descuento */}
-              {producto.nombre !== "Descuento 5%" && (
+              {producto.tipo !== "descuento" && (
                 <button
                   className="btn btn-danger btn-sm"
                   onClick={() => eliminarProducto(producto.id)}
@@ -186,34 +191,25 @@ const Carrito = ({ carrito, setCarrito }) => {
       </div>
 
       <div className="offcanvas-footer">
-      {mensajeDescuento && (
-  <div
-    className={`alert ${
-      mensajeDescuento.tipo === "exito" ? "alert-success" : "alert-danger"
-    } py-2 px-3 mb-2`}
-  >
-    {mensajeDescuento.texto}
-  </div>
-)}
-
-        <p>Total: {total} €</p>
-
-        {/* Descuento por juegos de mesa */}
-        {descuentoJuegos > 0 && (
-          <div className="descuento-aplicado">
-            <img src="/imagenes/descuento5.jpg" alt="Descuento 15%" width="50" />
-            <p>-{descuentoJuegos.toFixed(2)}€ por Juegos de Mesa</p>
+        {mensajeDescuento && (
+          <div
+            className={`alert ${
+              mensajeDescuento.tipo === "exito" ? "alert-success" : "alert-danger"
+            } py-2 px-3 mb-2`}
+          >
+            {mensajeDescuento.texto}
           </div>
         )}
 
-        {/* Código descuento manual */}
+        <p>Total: {total} €</p>
+
         <input
           type="text"
           placeholder="Código de descuento"
           value={codigoDescuento}
           onChange={(e) => setCodigoDescuento(e.target.value)}
         />
-        <button className="btn btn-success btn-sm" onClick={aplicarCodigoDescuento}>
+        <button className="btn btn-success btn-sm mt-2" onClick={aplicarCodigoDescuento}>
           Aplicar Código
         </button>
       </div>
