@@ -22,7 +22,7 @@ app.use(session({
     }
 }));
 
-const FRONTEND = process.env.FRONTEND_URL || 'http://localhost:5173';
+const FRONTEND = process.env.FRONTEND_URL || 'http://localhost:3000';
 
 // 2️⃣ Configurar CORS con credentials
 app.use(cors({
@@ -47,6 +47,9 @@ app.use("/api/productos", require("./rutas/productos"));
 app.use("/api/usuarios", require("./rutas/usuarios"));
 
 // 6️⃣ Arrancar el servidor
-app.listen(process.env.PORT, () =>
-    console.log(`🚀 Servidor Express en http://localhost:${process.env.PORT}`)
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, '0.0.0.0', () =>
+    console.log(`🚀 Servidor Express escuchando externamente en el puerto ${PORT}`)
 );
+
