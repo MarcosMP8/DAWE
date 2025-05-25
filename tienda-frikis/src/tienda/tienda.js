@@ -62,19 +62,25 @@ export function crearProducto(tipoP, nomP, precioP, descp, imagUrl, infExtra) {
     return nuevoProducto
 }
 
-export function obtenerCampoAdicional(producto){
-    if (producto instanceof Videojuego) {
-        return `<p><strong>Compañía :</strong> ${producto.compañia}</p>`;
-    } else if (producto instanceof Libro) {
-        return `<p><strong>Editorial :</strong> ${producto.editorial}</p>`;
-    } else if (producto instanceof Merchandising) {
-        return `<p><strong>Fabricante :</strong> ${producto.fabricante}</p>`;
-    } else if (producto instanceof Puzzle) {
-        return `<p><strong>Núm. Piezas :</strong> ${producto.piezas}</p>`;
-    } else if (producto instanceof JuegoDeMesa) {
-        return `<p><strong>Núm. Jugadores :</strong> ${producto.jugadores}</p>`;
-    }
+export function obtenerCampoAdicional(producto) {
+  if (!producto || !producto.tipo || !producto.extra) return "";
+
+  switch (producto.tipo) {
+    case "T1":
+      return `<p><strong>Compañía:</strong> ${producto.extra}</p>`;
+    case "T2":
+      return `<p><strong>Editorial:</strong> ${producto.extra}</p>`;
+    case "T3":
+      return `<p><strong>Fabricante:</strong> ${producto.extra}</p>`;
+    case "T4":
+      return `<p><strong>Nº piezas:</strong> ${producto.extra}</p>`;
+    case "T5":
+      return `<p><strong>Jugadores:</strong> ${producto.extra}</p>`;
+    default:
+      return `<p><strong>Extra:</strong> ${producto.extra}</p>`;
+  }
 }
+
 
 // Guarda o actualiza un producto en localStorage
 
