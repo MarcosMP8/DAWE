@@ -88,7 +88,7 @@ const App = () => {
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        fetch("http://localhost:4000/api/usuarios/me", { credentials: "include" })
+        fetch("http://146.190.27.95:3000/api/usuarios/me", { credentials: "include" })
           .then((r) => r.json())
           .then((data) => {
             if (data.usuario) {
@@ -114,7 +114,7 @@ const App = () => {
 
   const cerrarSesion = async () => {
     await signOut(auth);
-    await fetch("http://localhost:4000/api/usuarios/logout", {
+    await fetch("http://146.190.27.95:3000/api/usuarios/logout", {
       method: "POST",
       credentials: "include",
     });
@@ -128,7 +128,7 @@ const App = () => {
 
   const agregarProducto = async (nuevo) => {
     try {
-      const res = await fetch("http://localhost:4000/api/productos", {
+      const res = await fetch("http://146.190.27.95:3000/api/productos", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
