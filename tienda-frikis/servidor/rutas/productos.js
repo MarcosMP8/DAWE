@@ -7,11 +7,16 @@ router.get("/", async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 6;
   const skip = (page - 1) * limit;
-  console.log("👉 Recibido page:", page, "limit:", limit, "skip:", skip);
+  const search = req.query.search || "";
+  
 
   try {
-    const total = await Producto.countDocuments();
-    const productos = await Producto.find().skip(skip).limit(limit);
+    const filtro = search
+      ? { nombre: { $regex: search, $options: "i" } }
+      : {};
+      const total = await Producto.countDocuments(filtro);
+      const productos = await Producto.find(filtro).skip(skip).limit(limit);
+
     res.json({ productos, total });
   } catch (error) {
     res.status(500).json({ error: "Error al obtener productos" });
