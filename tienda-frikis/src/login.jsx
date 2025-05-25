@@ -14,7 +14,7 @@ function Login({ onLoginExitoso, estaOffline }) {
     try {
       await signInWithEmailAndPassword(auth, email, password);
 
-      const res = await fetch("http://localhost:4000/api/usuarios/login", {
+      const res = await fetch("http://http://146.190.27.95:3000//api/usuarios/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
