@@ -22,7 +22,7 @@ app.use(session({
     }
 }));
 
-const FRONTEND = process.env.FRONTEND_URL || 'http://localhost:3000';
+const FRONTEND = process.env.FRONTEND_URL || 'http://146.190.27.95:3000/';
 
 // 2️⃣ Configurar CORS con credentials
 app.use(cors({
