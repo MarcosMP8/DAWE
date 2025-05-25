@@ -35,23 +35,38 @@ const App = () => {
 
   // ——— Función para cargar productos ———
   const fetchProductos = useCallback(() => {
-    fetch(
-      `http://localhost:4000/api/productos?page=${paginaActual}&limit=${productosPorPagina}`,
-      { credentials: "include" }
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        setProductos(Array.isArray(data.productos) ? data.productos : []);
-        setTotalProductos(data.total ?? data.productos.length);
-        setTotalPaginas(Math.ceil((data.total ?? data.productos.length) / productosPorPagina));
-      })
-      .catch(console.error);
-  }, [paginaActual]);
+  const params = new URLSearchParams();
+
+  if (busqueda.trim()) {
+    params.append("search", busqueda.trim());
+  } else {
+    params.append("page", paginaActual);
+    params.append("limit", productosPorPagina);
+  }
+
+  fetch(`http://localhost:4000/api/productos?${params.toString()}`, {
+    credentials: "include",
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      setProductos(Array.isArray(data.productos) ? data.productos : []);
+      setTotalProductos(data.total ?? 0);
+      setTotalPaginas(
+        busqueda.trim()
+          ? 1 // si estamos buscando, todo en una página
+          : Math.ceil((data.total ?? 0) / productosPorPagina)
+      );
+    })
+    .catch(console.error);
+}, [paginaActual, productosPorPagina, busqueda]);
+
+
+
 
   // ——— Inicial y cada vez que cambie página ———
   useEffect(() => {
-    fetchProductos();
-  }, [fetchProductos]);
+    fetchProductos(busqueda);
+  }, [fetchProductos, busqueda]);
 
   // ——— Inicializar carrito desde localStorage ———
   useEffect(() => {
@@ -160,7 +175,12 @@ const App = () => {
     });
   };
 
-  const manejarBusqueda = (texto) => setBusqueda(texto);
+  const manejarBusqueda = (texto) => {
+    setBusqueda(texto);
+    setPaginaActual(1); // Reinicia a la primera página una vez se deje de buscar
+    
+  };
+
 
   // ——— Render ———
   return (
@@ -197,13 +217,16 @@ const App = () => {
                   busqueda={busqueda}
                   setBusqueda={manejarBusqueda}
                 />
-                <Paginacion
-                  paginaActual={paginaActual}
-                  totalPaginas={totalPaginas}
-                  productosPorPagina={productosPorPagina}
-                  totalProductos={totalProductos}
-                  cambiarPagina={setPaginaActual}
-                />
+                {!busqueda.trim() && (
+                  <Paginacion
+                    paginaActual={paginaActual}
+                    totalPaginas={totalPaginas}
+                    productosPorPagina={productosPorPagina}
+                    totalProductos={totalProductos}
+                    cambiarPagina={setPaginaActual}
+                  />
+                )}
+
               </>
             ) : seccionPrincipal === "editarProductos" ? (
               <EditarProductos estaOffline={estaOffline} />
