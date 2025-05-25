@@ -44,7 +44,7 @@ const App = () => {
     params.append("limit", productosPorPagina);
   }
 
-  fetch(`http://localhost:4000/api/productos?${params.toString()}`, {
+  fetch(`http://http://146.190.27.95:3000//api/productos?${params.toString()}`, {
     credentials: "include",
   })
     .then((res) => res.json())
