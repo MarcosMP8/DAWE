@@ -90,32 +90,33 @@ const EditarProductos = ({ estaOffline }) => {
   };
 
   return (
-    <div>
-      <button
-        className="btn btn-secondary mb-3 btn-sm"
-        onClick={borrarSeleccionados}
-        disabled={estaOffline || seleccionados.size === 0}
-      >
-        Borrar todos los seleccionados
-      </button>
+  <div>
+    <button
+      className="btn btn-secondary mb-3 btn-sm"
+      onClick={borrarSeleccionados}
+      disabled={estaOffline || seleccionados.size === 0}
+    >
+      Borrar todos los seleccionados
+    </button>
 
-      <ul className="list-group">
-        {productos.map((p) => (
-          <li
-            key={p._id}
-            className="list-group-item d-flex align-items-center py-1"
-          >
-            <input
-              type="checkbox"
-              className="me-2 form-check-input"
-              checked={seleccionados.has(p._id)}
-              onChange={() => toggleSeleccion(p._id)}
-              disabled={estaOffline}
-            />
+    <ul className="list-group">
+      {productos.map((p) => (
+        <li key={p._id} className="list-group-item py-1">
+          {/* Fila principal alineada */}
+          <div className="d-flex align-items-center justify-content-between">
+            <div className="d-flex align-items-center">
+              <input
+                type="checkbox"
+                className="me-2 form-check-input"
+                checked={seleccionados.has(p._id)}
+                onChange={() => toggleSeleccion(p._id)}
+                disabled={estaOffline}
+              />
 
-            <img src={p.imagen} alt="" className="thumbnail me-2" />
+              <img src={p.imagen} alt="" className="thumbnail me-2" />
 
-            <span className="flex-fill text-truncate">{p.nombre}</span>
+              <span className="text-truncate">{p.nombre}</span>
+            </div>
 
             {editando === p._id ? (
               <button
@@ -133,136 +134,142 @@ const EditarProductos = ({ estaOffline }) => {
                 Editar
               </button>
             )}
+          </div>
 
-            {editando === p._id && (
-              <>
-                {/* Desplegable justo debajo */}
-                <div className="w-100 mt-2">
-                  <select
-                    className="form-select form-select-sm"
-                    value={formValues.tipo}
-                  >
-                    <option value="T1">Videojuego</option>
-                    <option value="T2">Libro</option>
-                    <option value="T3">Merchandising</option>
-                    <option value="T4">Puzzle</option>
-                    <option value="T5">Juego de Mesa</option>
-                  </select>
-                </div>
+          {/* Formulario editable solo si está en modo edición */}
+          {editando === p._id && (
+            <>
+              <div className="w-100 mt-2">
+                <input
+                  type="text"
+                  className="form-control form-control-sm"
+                  value={
+                    {
+                      T1: "Videojuego",
+                      T2: "Libro",
+                      T3: "Merchandising",
+                      T4: "Puzzle",
+                      T5: "Juego de Mesa",
+                    }[formValues.tipo] || formValues.tipo
+                  }
+                  disabled
+                  readOnly
+                />
+              </div>
 
-                {/* Formulario principal */}
-                <div className="w-100 mt-1 border p-3 bg-light">
-                  <form onSubmit={guardarCambios}>
-                    {/* Nombre */}
-                    <div className="mb-2">
-                      <label className="form-label">Nombre</label>
+              <div className="w-100 mt-1 border p-3 bg-light">
+                <form onSubmit={guardarCambios}>
+                  {/* Nombre */}
+                  <div className="mb-2">
+                    <label className="form-label">Nombre</label>
+                    <input
+                      type="text"
+                      className="form-control form-control-sm"
+                      value={formValues.nombre}
+                      onChange={(e) =>
+                        setFormValues((f) => ({
+                          ...f,
+                          nombre: e.target.value,
+                        }))
+                      }
+                    />
+                  </div>
+
+                  {/* Precio + Extra */}
+                  <div className="row g-2">
+                    <div className="col">
+                      <label className="form-label">Precio</label>
                       <input
-                        type="text"
+                        type="number"
+                        min="0"
+                        step="0.01"
                         className="form-control form-control-sm"
-                        value={formValues.nombre}
+                        value={formValues.precio}
                         onChange={(e) =>
                           setFormValues((f) => ({
                             ...f,
-                            nombre: e.target.value,
+                            precio: parseFloat(e.target.value),
                           }))
                         }
                       />
                     </div>
-
-                    {/* Precio + Extra */}
-                    <div className="row g-2">
-                      <div className="col">
-                        <label className="form-label">Precio</label>
-                        <input
-                          type="number"
-                          min="0"
-                          step="1"
-                          className="form-control form-control-sm"
-                          value={formValues.precio}
-                          onChange={(e) =>
-                            setFormValues((f) => ({
-                              ...f,
-                              precio: parseInt(e.target.value, 10),
-                            }))
-                          }
-                        />
-                      </div>
-                      <div className="col">
-                        <label className="form-label">
-                          {p.tipo === "T4"
-                            ? "Número de piezas"
-                            : p.tipo === "T5"
-                            ? "Número de jugadores"
-                            : "Campo extra"}
-                        </label>
-                        <input
-                          type={
-                            p.tipo === "T4" || p.tipo === "T5"
-                              ? "number"
-                              : "text"
-                          }
-                          min={
-                            p.tipo === "T4" || p.tipo === "T5"
-                              ? "0"
-                              : undefined
-                          }
-                          className="form-control form-control-sm"
-                          value={formValues.extra}
-                          onChange={(e) =>
-                            setFormValues((f) => ({
-                              ...f,
-                              extra:
-                                p.tipo === "T4" || p.tipo === "T5"
-                                  ? parseInt(e.target.value, 10)
-                                  : e.target.value,
-                            }))
-                          }
-                        />
-                      </div>
-                    </div>
-
-                    {/* Descripción */}
-                    <div className="mb-2 mt-2">
-                      <label className="form-label">Descripción</label>
-                      <textarea
+                    <div className="col">
+                      <label className="form-label">
+                        {p.tipo === "T4"
+                          ? "Número de piezas"
+                          : p.tipo === "T5"
+                          ? "Número de jugadores"
+                          : "Campo extra"}
+                      </label>
+                      <input
+                        type={
+                          p.tipo === "T4" || p.tipo === "T5"
+                            ? "number"
+                            : "text"
+                        }
+                        min={
+                          p.tipo === "T4" || p.tipo === "T5"
+                            ? "0"
+                            : undefined
+                        }
                         className="form-control form-control-sm"
-                        rows="2"
-                        value={formValues.descripcion}
+                        value={formValues.extra}
                         onChange={(e) =>
                           setFormValues((f) => ({
                             ...f,
-                            descripcion: e.target.value,
+                            extra:
+                              p.tipo === "T4" || p.tipo === "T5"
+                                ? parseInt(e.target.value, 10)
+                                : e.target.value,
                           }))
                         }
                       />
                     </div>
+                  </div>
 
-                    {/* Drag & drop de imagen */}
-                    <div className="mb-2">
-                      <FileUploader
-                        handleChange={manejarImagen}
-                        name="file"
-                        types={fileTypes}
-                        classes="file-uploader"
-                      />
-                    </div>
+                  {/* Descripción */}
+                  <div className="mb-2 mt-2">
+                    <label className="form-label">Descripción</label>
+                    <textarea
+                      className="form-control form-control-sm"
+                      rows="2"
+                      value={formValues.descripcion}
+                      onChange={(e) =>
+                        setFormValues((f) => ({
+                          ...f,
+                          descripcion: e.target.value,
+                        }))
+                      }
+                    />
+                  </div>
 
-                    <button
-                      type="submit"
-                      className="btn btn-success btn-sm mt-2"
-                      disabled={estaOffline}
-                    >
-                      Guardar cambios
-                    </button>
-                  </form>
-                </div>
-              </>
-            )}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+                  {/* Drag & drop de imagen */}
+                  <div className="mb-2">
+                    <FileUploader
+                      handleChange={manejarImagen}
+                      name="file"
+                      types={fileTypes}
+                      classes="file-uploader"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="btn btn-success btn-sm mt-2"
+                    disabled={estaOffline}
+                  >
+                    Guardar cambios
+                  </button>
+                </form>
+              </div>
+            </>
+          )}
+        </li>
+      ))}
+    </ul>
+  </div>
+);
+
 };
 
 export default EditarProductos;

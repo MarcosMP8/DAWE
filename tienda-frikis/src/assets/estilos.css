@@ -67,10 +67,11 @@ ul {
     padding : 0;
 }
     
-li {
-    float:left; 
+header nav ul > li {
+    float: left;
     padding: 10px 20px;
 }
+
 
 li a {
     text-decoration: none; 
@@ -673,7 +674,7 @@ footer p {
   background-color: #5a6268;
 }
 
-/* Añádelo en estilos.css */
+
 .overlay-inactivo {
   position: absolute;
   top: 0;

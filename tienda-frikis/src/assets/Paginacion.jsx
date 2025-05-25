@@ -1,12 +1,19 @@
 import React from "react";
 
-const Paginacion = ({ paginaActual, totalPaginas, cambiarPagina }) => {
+const Paginacion = ({ paginaActual, totalPaginas, productosPorPagina, totalProductos, cambiarPagina }) => {
   const paginas = Array.from({ length: totalPaginas }, (_, i) => i + 1);
+
+  const mostradosHastaAhora = Math.min(paginaActual * productosPorPagina, totalProductos);
+
 
   return (
     <nav className="paginacion-nav my-3">
+      <p className="text-center text-muted mb-2">
+        Mostrando {mostradosHastaAhora} de {totalProductos} productos.
+      </p>
+
+
       <ul className="pagination justify-content-center">
-        {/* Botón Anterior (solo se muestra si no estamos en la primera página) */}
         {paginaActual > 1 && (
           <li className="page-item">
             <button
@@ -18,7 +25,6 @@ const Paginacion = ({ paginaActual, totalPaginas, cambiarPagina }) => {
           </li>
         )}
 
-        {/* Botones de páginas */}
         {paginas.map((numero) => (
           <li
             key={numero}
@@ -42,7 +48,6 @@ const Paginacion = ({ paginaActual, totalPaginas, cambiarPagina }) => {
           </li>
         ))}
 
-        {/* Botón Siguiente (solo se muestra si no estamos en la última página) */}
         {paginaActual < totalPaginas && (
           <li className="page-item">
             <button
