@@ -29,6 +29,8 @@ const App = () => {
   const [productos, setProductos] = useState([]);
   const [paginaActual, setPaginaActual] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
+  const [totalProductos, setTotalProductos] = useState(0);
+
   const productosPorPagina = 6;
 
   // ——— Función para cargar productos ———
@@ -40,6 +42,7 @@ const App = () => {
       .then((res) => res.json())
       .then((data) => {
         setProductos(Array.isArray(data.productos) ? data.productos : []);
+        setTotalProductos(data.total ?? data.productos.length);
         setTotalPaginas(Math.ceil((data.total ?? data.productos.length) / productosPorPagina));
       })
       .catch(console.error);
@@ -197,6 +200,8 @@ const App = () => {
                 <Paginacion
                   paginaActual={paginaActual}
                   totalPaginas={totalPaginas}
+                  productosPorPagina={productosPorPagina}
+                  totalProductos={totalProductos}
                   cambiarPagina={setPaginaActual}
                 />
               </>
